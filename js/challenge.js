@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 let counterElement = document.getElementById("counter");
 let currentCounterValue = parseInt(counterElement.innerText);
 
+let numberOfLikesObject = {};
+
 function startNewPageProcess() {
     startCounter();
     setupButtonMinus();
@@ -47,8 +49,43 @@ function runPlusButtonClicked() {
 function setupButtonHeart() {
     let selectedElement = document.getElementById("heart");
     selectedElement.addEventListener("click", function() {
-        console.log('clicked heart');
+        runHeartButtonClicked();
     });
+}
+
+function runHeartButtonClicked() {
+
+    if (currentCounterValue in numberOfLikesObject) {
+        numberOfLikesObject[currentCounterValue] = numberOfLikesObject[currentCounterValue] + 1;
+        udpateExistingLiItem(currentCounterValue);
+
+    } else {
+        numberOfLikesObject[currentCounterValue] = 1;
+        addNewLiItem(currentCounterValue);
+    }
+}
+
+function addNewLiItem(numberToAdd) {
+    let newLiElement = document.createElement("li");
+    let newLikeText = numberToAdd + " has been liked " + "1 time"
+    newLiElement.appendChild(document.createTextNode(newLikeText));
+    let unorderedListElement = document.querySelector(".likes");
+    unorderedListElement.appendChild(newLiElement);
+}
+
+function udpateExistingLiItem(numberToUpdate) {
+    let unorderedListElement = document.querySelector(".likes");
+    let listItem = unorderedListElement.getElementsByTagName("li");
+
+    for (let t=0; t < listItem.length; t++) {
+        let valueToCheck = listItem[t].innerHTML;
+        let splitString = valueToCheck.split(" ");
+        let numberLiked = parseInt(splitString[0]);
+        if (numberLiked == numberToUpdate) {
+            let newLikeText = numberToUpdate + " has been liked " + `${numberOfLikesObject[numberToUpdate]} times`
+            listItem[t].innerText = newLikeText;
+        }
+    } 
 }
 
 function setupButtonPause() {
