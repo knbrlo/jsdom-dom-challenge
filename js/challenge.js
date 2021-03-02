@@ -10,6 +10,12 @@ let currentCounterValue = parseInt(counterElement.innerText);
 
 let numberOfLikesObject = {};
 
+// buttons
+let buttonMinus = document.getElementById("minus");
+let buttonPlus = document.getElementById("plus");
+let buttonHeart = document.getElementById("heart");
+let buttonSubmit = document.getElementById("submit");
+
 function startNewPageProcess() {
     setupButtonMinus();
     setupButtonPlus();
@@ -23,8 +29,7 @@ function incrementTimer() {
 }
 
 function setupButtonMinus() {
-    let selectedElement = document.getElementById("minus");
-    selectedElement.addEventListener("click", function() {
+    buttonMinus.addEventListener("click", function() {
         runMinusButtonClicked();
     });
 }
@@ -35,8 +40,7 @@ function runMinusButtonClicked() {
 }
 
 function setupButtonPlus() {
-    let selectedElement = document.getElementById("plus");
-    selectedElement.addEventListener("click", function() {
+    buttonPlus.addEventListener("click", function() {
         runPlusButtonClicked();
     });
 }
@@ -47,14 +51,12 @@ function runPlusButtonClicked() {
 }
 
 function setupButtonHeart() {
-    let selectedElement = document.getElementById("heart");
-    selectedElement.addEventListener("click", function() {
+    buttonHeart.addEventListener("click", function() {
         runHeartButtonClicked();
     });
 }
 
 function runHeartButtonClicked() {
-
     if (currentCounterValue in numberOfLikesObject) {
         numberOfLikesObject[currentCounterValue] = numberOfLikesObject[currentCounterValue] + 1;
         udpateExistingLiItem(currentCounterValue);
@@ -97,12 +99,33 @@ function setupButtonPause() {
 }
 
 function runPausePressed() {
+    let buttonPauseResume = document.getElementById("pause");
+    
+    
     if (!pausedTimer) {
         clearInterval(intervalTimer);
+        buttonPauseResume.innerText = "resume";
+        disableButtons();
         pausedTimer = true;
     } else {
         intervalTimer = setInterval(function() {incrementTimer(); }, 1000);
+        buttonPauseResume.innerText = "pause";
+        enableButtons();
         pausedTimer = false;
     }
 
+}
+
+function disableButtons() {
+    buttonMinus.disabled = true;
+    buttonPlus.disabled = true;
+    buttonHeart.disabled = true;
+    buttonSubmit.disabled = true;
+}
+
+function enableButtons() {
+    buttonMinus.disabled = false;
+    buttonPlus.disabled = false;
+    buttonHeart.disabled = false;
+    buttonSubmit.disabled = false;
 }
