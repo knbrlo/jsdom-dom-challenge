@@ -4,23 +4,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 let pausedTimer = false;
 let intervalTimer = setInterval(function() {incrementTimer(); }, 1000);
-
 let counterElement = document.getElementById("counter");
 let currentCounterValue = parseInt(counterElement.innerText);
-
 let numberOfLikesObject = {};
-
-// buttons
 let buttonMinus = document.getElementById("minus");
 let buttonPlus = document.getElementById("plus");
 let buttonHeart = document.getElementById("heart");
 let buttonSubmit = document.getElementById("submit");
+let listForComments = document.createElement("ul");
+listForComments.id = 'ul-comments';
+let divContainer = document.getElementById('list');
+divContainer.appendChild(listForComments);
 
 function startNewPageProcess() {
     setupButtonMinus();
     setupButtonPlus();
     setupButtonHeart();
     setupButtonPause();
+    setupFormSubmission();
 }
 
 function incrementTimer() {
@@ -78,7 +79,6 @@ function addNewLiItem(numberToAdd) {
 function udpateExistingLiItem(numberToUpdate) {
     let unorderedListElement = document.querySelector(".likes");
     let listItem = unorderedListElement.getElementsByTagName("li");
-
     for (let t=0; t < listItem.length; t++) {
         let valueToCheck = listItem[t].innerHTML;
         let splitString = valueToCheck.split(" ");
@@ -100,8 +100,6 @@ function setupButtonPause() {
 
 function runPausePressed() {
     let buttonPauseResume = document.getElementById("pause");
-    
-    
     if (!pausedTimer) {
         clearInterval(intervalTimer);
         buttonPauseResume.innerText = "resume";
@@ -113,7 +111,6 @@ function runPausePressed() {
         enableButtons();
         pausedTimer = false;
     }
-
 }
 
 function disableButtons() {
@@ -129,3 +126,60 @@ function enableButtons() {
     buttonHeart.disabled = false;
     buttonSubmit.disabled = false;
 }
+
+function setupFormSubmission() {
+    document.getElementById("comment-form").addEventListener("submit", function(e){
+        formSubmitted(e);
+    });
+}
+
+function formSubmitted(event) {
+    event.preventDefault();
+    var object = {};
+    const formData = new FormData(event.target);
+    formData.forEach(function(value, key){
+        object[key] = value;
+    });
+    var jsonDataFromForm = JSON.stringify(object);
+    var parsedFormData = JSON.parse(jsonDataFromForm);
+    var newCommentDescription = "";
+    for (const [key, value] of Object.entries(parsedFormData)) {
+      if (key == "comment") {
+        newCommentDescription = value
+      }
+    }
+    if (newCommentDescription.length > 0) {
+        let doesCommentExist = doesCommentAlreadyExist(newCommentDescription);
+        if (doesCommentExist == false) {
+            addItemToCommentsList(newCommentDescription);
+        }
+    } else {
+      console.log("The comment has no name");
+    }
+  }
+  
+  function addItemToCommentsList(newCommentDescription){
+    let newCommentElement = document.createElement("li");
+    newCommentElement.appendChild(document.createTextNode(newCommentDescription));
+    listForComments.appendChild(newCommentElement);
+  }
+  
+  function doesCommentAlreadyExist(newCommentDescription) {
+    let commentListElement = document.getElementById('ul-comments');
+    let listItem = commentListElement.getElementsByTagName("li");
+    let arrayCommentValues = [];
+    let finalReturnValue = false;
+    if (listItem.length > 0) {
+      for (let t=0; t < listItem.length; t++) {
+        let valueToCheck = listItem[t].innerHTML;
+        arrayCommentValues.push(valueToCheck);
+      } 
+      if (arrayCommentValues.includes(newCommentDescription)) {
+        finalReturnValue = true;
+      } 
+    } else {
+      return false;
+    }
+    return finalReturnValue;
+  }
+  
