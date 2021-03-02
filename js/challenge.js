@@ -2,24 +2,24 @@ document.addEventListener("DOMContentLoaded", () => {
     startNewPageProcess();
 });
 
+let pausedTimer = false;
+let intervalTimer = setInterval(function() {incrementTimer(); }, 1000);
+
 let counterElement = document.getElementById("counter");
 let currentCounterValue = parseInt(counterElement.innerText);
 
 let numberOfLikesObject = {};
 
 function startNewPageProcess() {
-    startCounter();
     setupButtonMinus();
     setupButtonPlus();
     setupButtonHeart();
     setupButtonPause();
 }
 
-function startCounter() {
-    setInterval(function () {
-        currentCounterValue = currentCounterValue + 1;
-        counterElement.innerText = currentCounterValue;
-    }, 1000);
+function incrementTimer() {
+    currentCounterValue = currentCounterValue + 1;
+    counterElement.innerText = currentCounterValue;
 }
 
 function setupButtonMinus() {
@@ -91,6 +91,18 @@ function udpateExistingLiItem(numberToUpdate) {
 function setupButtonPause() {
     let selectedElement = document.getElementById("pause");
     selectedElement.addEventListener("click", function() {
+        runPausePressed();
         console.log('clicked pause');
     });
+}
+
+function runPausePressed() {
+    if (!pausedTimer) {
+        clearInterval(intervalTimer);
+        pausedTimer = true;
+    } else {
+        intervalTimer = setInterval(function() {incrementTimer(); }, 1000);
+        pausedTimer = false;
+    }
+
 }
